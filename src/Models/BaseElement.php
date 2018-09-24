@@ -98,7 +98,7 @@ class BaseElement extends DataObject
      * @internal
      * @var array
      */
-    protected $cacheData;
+    protected static $_cacheData = [];
 
     private static $default_sort = 'Sort';
 
@@ -457,15 +457,16 @@ class BaseElement extends DataObject
     public function getPage()
     {
         // Allow for repeated calls to be cached
-        if (isset($this->cacheData['page'])) {
-            return $this->cacheData['page'];
+        $hash = 'page' . $this->ID;
+        if (isset(static::$_cacheData[$hash])) {
+            return static::$_cacheData[$hash];
         }
 
         $area = $this->Parent();
 
         if ($area instanceof ElementalArea && $area->exists()) {
-            $this->cacheData['page'] = $area->getOwnerPage();
-            return $this->cacheData['page'];
+            static::$_cacheData[$hash] = $area->getOwnerPage();
+            return static::$_cacheData[$hash];
         }
 
         return null;
@@ -586,8 +587,9 @@ class BaseElement extends DataObject
     public function CMSEditLink()
     {
         // Allow for repeated calls to be returned from cache
-        if (isset($this->cacheData['cms_edit_link'])) {
-            return $this->cacheData['cms_edit_link'];
+        $hash = 'cms_edit_link' . $this->ID;
+        if (isset(static::$_cacheData[$hash])) {
+            return static::$_cacheData[$hash];
         }
 
         $relationName = $this->getAreaRelationName();
@@ -597,7 +599,6 @@ class BaseElement extends DataObject
             return null;
         }
 
-        $editLinkPrefix = '';
         if (!$page instanceof SiteTree && method_exists($page, 'CMSEditLink')) {
             $editLinkPrefix = Controller::join_links($page->CMSEditLink(), 'ItemEditForm');
         } else {
@@ -620,7 +621,7 @@ class BaseElement extends DataObject
 
         $this->extend('updateCMSEditLink', $link);
 
-        $this->cacheData['cms_edit_link'] = $link;
+        static::$_cacheData[$hash] = $link;
         return $link;
     }
 
@@ -634,8 +635,9 @@ class BaseElement extends DataObject
     public function getAreaRelationName()
     {
         // Allow repeated calls to return from internal cache
-        if (isset($this->cacheData['area_relation_name'])) {
-            return $this->cacheData['area_relation_name'];
+        $hash = 'area_relation_name' . $this->ID;
+        if (isset(self::$_cacheData[$hash])) {
+            return self::$_cacheData[$hash];
         }
 
         $page = $this->getPage();
@@ -657,7 +659,7 @@ class BaseElement extends DataObject
             }
         }
 
-        $this->cacheData['area_relation_name'] = $result;
+        self::$_cacheData[$hash] = $result;
         return $result;
     }
 

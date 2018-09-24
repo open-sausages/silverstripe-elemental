@@ -61,7 +61,7 @@ class ElementalArea extends DataObject
      * @internal
      * @var array
      */
-    protected $cacheData = [];
+    protected static $_cacheData = [];
 
     /**
      * @return array
@@ -145,8 +145,9 @@ class ElementalArea extends DataObject
     public function getOwnerPage()
     {
         // Allow for repeated calls to read from cache
-        if (isset($this->cacheData['owner_page'])) {
-            return $this->cacheData['owner_page'];
+        $ownerHash = md5('owner_page' . $this->ID);
+        if (isset(static::$_cacheData[$ownerHash])) {
+            return static::$_cacheData[$ownerHash];
         }
 
         if ($this->OwnerClassName) {
@@ -164,7 +165,7 @@ class ElementalArea extends DataObject
                 $page = Versioned::get_by_stage($class, $currentStage)->filter($areaID, $this->ID)->first();
 
                 if ($page) {
-                    $this->cacheData['owner_page'] = $page;
+                    static::$_cacheData[$ownerHash] = $page;
                     return $page;
                 }
             }
@@ -186,8 +187,8 @@ class ElementalArea extends DataObject
                         $this->OwnerClassName = $class;
                         $this->write();
                     }
-
-                    $this->cacheData['area_relation_name'] = $page;
+                    $relationHash = md5('area_relation_name' . $this->ID);
+                    static::$_cacheData[$relationHash] = $page;
                     return $page;
                 }
             }
