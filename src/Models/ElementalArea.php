@@ -62,7 +62,21 @@ class ElementalArea extends DataObject
      * @var array
      */
     protected static $_cacheData = [];
+    protected $cacheElements;
+    public function setElements(array $elements)
+    {
+            $this->cacheElements = ArrayList::create($elements);
 
+            return $this;
+    }
+
+    public function Elements()
+    {
+        if ($this->cacheElements) {
+            return $this->cacheElements;
+        }
+        return parent::Elements();
+    }
     /**
      * @return array
      */

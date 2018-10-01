@@ -2,6 +2,9 @@
 
 namespace DNADesign\Elemental;
 
+use App\Models\Blocks\LayoutBlock;
+use App\ORM\EagerLoadList;
+use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
 use DNADesign\Elemental\Forms\ElementalAreaConfig;
 use DNADesign\Elemental\Forms\ElementalAreaField;
@@ -9,6 +12,11 @@ use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataObjectSchema;
+use SilverStripe\ORM\DataQuery;
+use SilverStripe\ORM\HasManyList;
 use Symbiote\GridFieldExtensions\GridFieldAddNewMultiClass;
 
 class ElementalEditor
